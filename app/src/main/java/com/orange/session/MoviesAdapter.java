@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -19,9 +20,19 @@ import java.util.Locale;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
     private List<Movie> movies;
+    private OnItemClickListener onItemClickListener;
 
-    public MoviesAdapter(List<Movie> movies) {
+    public MoviesAdapter() {
+
+    }
+
+    public void setMovies(List<Movie> movies) {
         this.movies = movies;
+        notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @Override
@@ -40,11 +51,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return movies != null ? movies.size() : 0;
     }
 
     class MoviesViewHolder extends RecyclerView.ViewHolder{
 
+        LinearLayout mRootLayout;
         ImageView posterImageView;
         TextView nameTextView;
         TextView dateTextView;
@@ -54,6 +66,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         public MoviesViewHolder(View itemView) {
             super(itemView);
+            mRootLayout = (LinearLayout) itemView.findViewById(R.id.item_movie);
             posterImageView = (ImageView) itemView.findViewById(R.id.movie_poster_image_view);
             nameTextView = (TextView) itemView.findViewById(R.id.movie_name_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.movie_date_text_view);
@@ -62,14 +75,26 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             votersTextView = (TextView) itemView.findViewById(R.id.movie_voters_count_text_view);
         }
 
-        public void setContent(Movie movie) {
+        public void setContent(final Movie movie) {
             Picasso.with(posterImageView.getContext()).load(movie.getImageUrl()).into(posterImageView);
             nameTextView.setText(movie.getName());
             dateTextView.setText(movie.getDate());
             rateTextView.setText(String.format(Locale.getDefault(), "%.2f", movie.getRate()));
             descriptionTextView.setText(movie.getDescription());
             votersTextView.setText(String.format(Locale.getDefault(), "%d", movie.getNumOfVoters()));
+            mRootLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(movie);
+                    }
+                }
+            });
         }
 
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Movie movie);
     }
 }

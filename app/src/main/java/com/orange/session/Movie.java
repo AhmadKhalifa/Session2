@@ -1,12 +1,15 @@
 package com.orange.session;
 
+import java.io.Serializable;
+
 /**
  * Created by Khalifa on 8/12/2017.
  */
 
-public class Movie {
+public class Movie implements Serializable {
     private String name;
     private String imageUrl;
+    private String backDropUrl;
     private double rate;
     private int numOfVoters;
     private String date;
@@ -18,6 +21,14 @@ public class Movie {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBackDropUrl() {
+        return backDropUrl;
+    }
+
+    public void setBackDropUrl(String backDropUrl) {
+        this.backDropUrl = backDropUrl;
     }
 
     public String getImageUrl() {
